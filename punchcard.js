@@ -10,6 +10,16 @@ $.get("./data/u01.processed", function(data){
 	}
 	//console.log(dates)
 
+	var slots = [];
+	for (var i = 0; i <= 15 * 24; i++) {
+		slots[i] = {
+			rect: undefined
+			, cnt: 0
+		};
+	}
+	//console.log(slots.length)
+	//return
+
 	var firstDate = new Date(2013, 03, 22);
 	var currDate = new Date(2013, 03, 22);
 
@@ -46,6 +56,9 @@ $.get("./data/u01.processed", function(data){
 						cnt++;
 					}
 				}
+				var slot = d * 24 + (c*4) + r;
+				//console.log(slot)
+				slots[slot].cnt = cnt;
 
 				if (cnt > max) max = cnt;
 
@@ -59,10 +72,7 @@ $.get("./data/u01.processed", function(data){
 				//rect.attr("fill", "#" + parseInt(cnt, 16) + "00");
 				//rect.attr("fill", "#0" + (d%9) + "" + (d%9));
 
-				rects.push({
-					"rect": rect
-					, "cnt": cnt
-				})
+				slots[slot].rect = rect;
 
 				/* add one hour */
 				currDate.setTime( currDate.getTime() + one_hour);
@@ -77,8 +87,11 @@ $.get("./data/u01.processed", function(data){
 
 	// 255 = f * max
 	var f = 255 / max;
-	for (var r in rects) {
-		var foo = rects[r];
+	for (var s = 0; s < 15 * 24; s++) {
+		var foo = slots[s];
+		if (foo.rect == undefined)
+			console.log(s)
+
 		//if (foo.cnt > 0) console.log(foo.cnt)
 		if (foo.cnt === 0) 
 			foo.rect.attr("fill", "#fff")
