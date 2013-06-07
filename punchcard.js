@@ -1,6 +1,7 @@
 var slots = [];
 var one_hour = 3600000;
 var max  = 0;
+var viz = 2;
 
 $.get("./data/u01.processed", function(data){
 	var lines = data.split('\n');
@@ -9,68 +10,73 @@ $.get("./data/u01.processed", function(data){
 		var line = lines[i].replace(';', ' ')
 		dates.push(new Date(line));
 	}
-	//console.log(dates)
 
-	for (var i = 0; i < 15 * 24; i++) {
+	for (var i = 0; i < 14 * 24; i++) {
 		slots[i] = {
 			rect: undefined
 			, cnt: 0
 			, dates: []
 		};
 	}
-	//console.log(slots.length)
-	//return
 
-
-	var rect_size = 10;
-	var rect_margin = 5;
-	var day_margin = 40;
-	var paper = Raphael("canvas", 900, 600);
-	var cols = 4;
+	if (viz == 1) {
+		var rect_size = 15;
+		var rect_margin = 5;
+		var day_margin = 20;
+		var days_in_row = 7;
+	} else {
+		var rect_size = 13;
+		var rect_margin = 3;
+		var day_margin = 0;
+		var days_in_row = 15;
+	}
+	var paper = Raphael("canvas", 1280, 600);
+	var cols = 6;
 	var rows = 24 / cols;
 	var day_width = (cols * rect_size) + (cols*rect_margin) + day_margin;
 
-	var days_in_row = 7;
 	var y_margin = 0;
 	var rects = [];
 
-	for (var d = 0; d <= 14; d++) {
-		for (var r = 0; r < rows; r++) {
-			for (var c = 0; c < cols; c++) {
-				var slot = d * 24 + (r*4) + c;
+	for (var d = 0; d < 14; d++) {
+		for (var c = 0; c < cols; c++) {
+			for (var r = 0; r < rows; r++) {
+				var slot = d * 24 + (c*rows) + r;
+				//console.log(slot)
 
-				if (slot > 14 * 24 + 7)
+				if (slot > 13 * 24 + 7) /* 8 is deadline */
 					continue;
 
 				var rect = paper.rect(
-					((d%days_in_row)*day_width) + (r * rect_margin) + (r * rect_size) 
-					, (c * rect_margin) + (c * rect_size) + y_margin
+					((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
+					, (r * rect_margin) + (r * rect_size) + y_margin
 					, rect_size
 					, rect_size
 				);
-				rect.attr("fill", "#0f0");
-				rect.attr("id", slot);
 
+				rect.attr("fill", "#0f0");
 				slots[slot].rect = rect;
 			}
 		}
 
-		if ((d === 13 || d === 6) && d > 0) 
-			y_margin += (rows * rect_size) + (rows*rect_margin) + 40;
+		if ((d === 13 || d === 6) && d > 0) {
+			if (viz == 1)
+				y_margin += (rows * rect_size) + (rows*rect_margin) + 40;
+		}
 	}
 
-	var firstDate = new Date(2013, 03, 22);
-	var currDate = new Date(2013, 03, 22);
+	var firstDate = new Date(2013, 03, 23);
+	var currDate = new Date(2013, 03, 23);
 	process(currDate, firstDate, data);
 
 	$.get("./data/u02.processed", function(data){
-		var currDate = new Date(2013, 4, 7);
-		var firstDate = new Date(2013, 4, 7);
+		var currDate = new Date(2013, 4, 8);
+		var firstDate = new Date(2013, 4, 8);
 		process(currDate, firstDate, data);
 
 		$.get("./data/u03.processed", function(data){
-			var currDate = new Date(2013, 4, 20);
-			var firstDate = new Date(2013, 4, 20);
+			var currDate = new Date(2013, 4, 21);
+			var firstDate = new Date(2013, 4, 21);
 
 			process(currDate, firstDate, data);
 			paint()
@@ -82,20 +88,27 @@ $.get("./data/u01.processed", function(data){
 function paint() {
 	// 255 = f * max
 	var f = 255 / max;
-	for (var s = 0; s < 15 * 24; s++) {
+	for (var s = 0; s < 14 * 24; s++) {
 		var foo = slots[s];
-		if (foo == undefined || foo.rect == undefined) 
+		if (foo == undefined || foo.rect == undefined) {
+			console.log(s + " was undef")
 			continue;
+		}
 
 		//if (foo.cnt > 0) console.log(foo.cnt)
+		if (viz == 1)
+			foo.rect.attr("stroke", "#000")
+		else
+			foo.rect.attr("stroke", "#444")
+
 		if (foo.cnt === 0 ) 
 			foo.rect.attr("fill", "#fff")
 		else {
 			//console.log(100 + f * foo.cnt)
 			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
 			//console.log(col)
-			foo.rect.attr("stroke", "#7D9AAA")
-			foo.rect.attr("stroke", "#000")
+			//foo.rect.attr("stroke", "#7D9AAA")
+			//foo.rect.attr("stroke", "#000")
 
 			//foo.rect.attr("fill", "#7D9AAA")
 			//foo.rect.attr("opacity", (1.0 / max) * foo.cnt)
@@ -134,10 +147,10 @@ function process(currDate, firstDate, data) {
 		}
 		//console.log(data)
 
-		for (var slot = 0; slot < 15 * 24; slot++) {
+		for (var slot = 0; slot < 14 * 24; slot++) {
 			currDate.setTime( firstDate.getTime() + (slot * one_hour));
-			if (slot >=  354)
-				console.log(currDate)
+			//if (slot >=  354)
+				//console.log(currDate)
 
 			// in this hour, how many people have submitted stuff? 
 			var startHour = currDate.getTime() - one_hour;
@@ -153,8 +166,8 @@ function process(currDate, firstDate, data) {
 				}
 			}
 			slots[slot].cnt += cnt;
-			if (cnt > 0)
-			console.log(cnt)
+			//if (cnt > 0)
+			//console.log(cnt)
 
 			if (cnt > max) max = cnt;
 		}
