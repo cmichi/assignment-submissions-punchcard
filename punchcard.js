@@ -1,27 +1,26 @@
-//$(function() {
+var slots = [];
+var one_hour = 3600000;
+var max  = 0;
+
 $.get("./data/u01.processed", function(data){
 	var lines = data.split('\n');
 	var dates = [];
 	for (var i in lines) {
 		var line = lines[i].replace(';', ' ')
-		//console.log(line)
-		//console.log(new Date(line))
 		dates.push(new Date(line));
 	}
 	//console.log(dates)
 
-	var slots = [];
-	for (var i = 0; i <= 15 * 24; i++) {
+	for (var i = 0; i < 15 * 24; i++) {
 		slots[i] = {
 			rect: undefined
 			, cnt: 0
+			, dates: []
 		};
 	}
 	//console.log(slots.length)
 	//return
 
-	var firstDate = new Date(2013, 03, 22);
-	var currDate = new Date(2013, 03, 22);
 
 	var rect_size = 10;
 	var rect_margin = 5;
@@ -33,79 +32,84 @@ $.get("./data/u01.processed", function(data){
 
 	var days_in_row = 7;
 	var y_margin = 0;
-	var one_hour = 3600000;
-	var max  = 0;
 	var rects = [];
 
 	for (var d = 0; d <= 14; d++) {
-		currDate.setTime( firstDate.getTime() + d * 86400000 );
+		for (var r = 0; r < rows; r++) {
+			for (var c = 0; c < cols; c++) {
+				var slot = d * 24 + (r*4) + c;
 
-		for (var c = 0; c < rows; c++) {
-			for (var r = 0; r < cols; r++) {
-
-				/* in this hour, how many people have submitted stuff? */
-				var startHour = currDate.getTime();
-				var endHour = currDate.getTime() + one_hour;
-				var cnt = 0
-				for (var i in dates) {
-					if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) {
-						//console.log(startHour)
-						//console.log(dates[i])
-						//console.log("!")
-						//return
-						cnt++;
-					}
-				}
-				var slot = d * 24 + (c*4) + r;
-				//console.log(slot)
-				slots[slot].cnt = cnt;
-
-				if (cnt > max) max = cnt;
+				if (slot > 14 * 24 + 7)
+					continue;
 
 				var rect = paper.rect(
-					((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
-					, (r * rect_margin) + (r * rect_size) + y_margin
+					((d%days_in_row)*day_width) + (r * rect_margin) + (r * rect_size) 
+					, (c * rect_margin) + (c * rect_size) + y_margin
 					, rect_size
 					, rect_size
 				);
 				rect.attr("fill", "#0f0");
-				//rect.attr("fill", "#" + parseInt(cnt, 16) + "00");
-				//rect.attr("fill", "#0" + (d%9) + "" + (d%9));
+				rect.attr("id", slot);
 
 				slots[slot].rect = rect;
-
-				/* add one hour */
-				currDate.setTime( currDate.getTime() + one_hour);
-
 			}
 		}
 
 		if ((d === 13 || d === 6) && d > 0) 
 			y_margin += (rows * rect_size) + (rows*rect_margin) + 40;
 	}
-	console.log("max: " + max)
 
+	var firstDate = new Date(2013, 03, 22);
+	var currDate = new Date(2013, 03, 22);
+	process(currDate, firstDate, data);
+
+	$.get("./data/u02.processed", function(data){
+		var currDate = new Date(2013, 4, 7);
+		var firstDate = new Date(2013, 4, 7);
+		process(currDate, firstDate, data);
+
+		$.get("./data/u03.processed", function(data){
+			var currDate = new Date(2013, 4, 20);
+			var firstDate = new Date(2013, 4, 20);
+
+			process(currDate, firstDate, data);
+			paint()
+		}, dataType = 'text');
+	}, dataType = 'text');
+
+}, dataType = 'text');
+
+function paint() {
 	// 255 = f * max
 	var f = 255 / max;
 	for (var s = 0; s < 15 * 24; s++) {
 		var foo = slots[s];
-		if (foo.rect == undefined)
-			console.log(s)
+		if (foo == undefined || foo.rect == undefined) 
+			continue;
 
 		//if (foo.cnt > 0) console.log(foo.cnt)
-		if (foo.cnt === 0) 
+		if (foo.cnt === 0 ) 
 			foo.rect.attr("fill", "#fff")
 		else {
 			//console.log(100 + f * foo.cnt)
 			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
 			//console.log(col)
-			foo.rect.attr("fill", "#ff0000")
-			foo.rect.attr("opacity", (1.0 / max) * foo.cnt)
+			foo.rect.attr("stroke", "#7D9AAA")
+			foo.rect.attr("stroke", "#000")
+
+			//foo.rect.attr("fill", "#7D9AAA")
+			//foo.rect.attr("opacity", (1.0 / max) * foo.cnt)
+
+			foo.rect.attr("fill", "#7D9AAA")
+			foo.rect.attr("opacity", 0.2 + (1.0 / max) * foo.cnt)
 			//return;
 		}
+			if (s >= 355) {
+				//foo.rect.attr("fill", "#f00")
+				//console.log()
+			}
 	}
-
-}, dataType = 'text');
+}
 
 function componentToHex(c) {
 	var hex = c.toString(16);
@@ -115,4 +119,44 @@ function componentToHex(c) {
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) +
     componentToHex(b);
+}
+
+function process(currDate, firstDate, data) {
+		var dates = [];
+
+		var lines = data.split('\n');
+		for (var i in lines) {
+			var line = lines[i].replace(';', ' ')
+			if (line.trim().length > 0) {
+				dates.push(new Date(line));
+				//console.log(line + " " + (new Date(line)))
+			}
+		}
+		//console.log(data)
+
+		for (var slot = 0; slot < 15 * 24; slot++) {
+			currDate.setTime( firstDate.getTime() + (slot * one_hour));
+			if (slot >=  354)
+				console.log(currDate)
+
+			// in this hour, how many people have submitted stuff? 
+			var startHour = currDate.getTime() - one_hour;
+			var endHour = currDate.getTime() 
+			var cnt = 0
+			for (var i in dates) {
+				if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) {
+					//console.log(startHour)
+					//console.log(dates[i])
+					//console.log("!")
+					//return
+					cnt++;
+				}
+			}
+			slots[slot].cnt += cnt;
+			if (cnt > 0)
+			console.log(cnt)
+
+			if (cnt > max) max = cnt;
+		}
+		console.log("max: " + max)
 }
