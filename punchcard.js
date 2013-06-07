@@ -86,7 +86,8 @@ $.get("./data/u01.processed", function(data){
 			//console.log(100 + f * foo.cnt)
 			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
 			//console.log(col)
-			foo.rect.attr("fill", col)
+			foo.rect.attr("fill", "#ff0000")
+			foo.rect.attr("opacity", (1.0 / max) * foo.cnt)
 			//return;
 		}
 	}
@@ -94,11 +95,11 @@ $.get("./data/u01.processed", function(data){
 }, dataType = 'text');
 
 function componentToHex(c) {
-    var hex = c.toString(16);
+	var hex = c.toString(16);
 	return hex.length == 1 ? "0" + hex : hex;
-	}
+}
 
-	function rgbToHex(r, g, b) {
-	    return "#" + componentToHex(r) + componentToHex(g) +
-	    componentToHex(b);
-	    }
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) +
+    componentToHex(b);
+}
