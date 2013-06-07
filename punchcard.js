@@ -3,8 +3,12 @@ $.get("./data/u01.processed", function(data){
 	var lines = data.split('\n');
 	var dates = [];
 	for (var i in lines) {
-		dates.push(new Date(lines[i]));
+		var line = lines[i].replace(';', ' ')
+		//console.log(line)
+		//console.log(new Date(line))
+		dates.push(new Date(line));
 	}
+	//console.log(dates)
 
 	var firstDate = new Date(2013, 03, 22);
 	var currDate = new Date(2013, 03, 22);
@@ -19,13 +23,27 @@ $.get("./data/u01.processed", function(data){
 
 	var days_in_row = 7
 	var y_margin = 0
+	var one_hour = 3600000
 
 	for (var d = 0; d <= 14; d++) {
 		currDate.setTime( firstDate.getTime() + d * 86400000 );
-		console.log(currDate)
 
 		for (var c = 0; c < rows; c++) {
 			for (var r = 0; r < cols; r++) {
+
+				/* in this hour, how many people have submitted stuff? */
+				var startHour = currDate.getTime();
+				var endHour = currDate.getTime() + one_hour;
+				for (var i in dates) {
+					if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour)
+					    {
+						    console.log(startHour)
+						console.log(dates[i])
+						console.log("!")
+						return
+						}
+				}
+
 				var rect = paper.rect(
 					((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
 					, (r * rect_margin) + (r * rect_size) + y_margin
@@ -34,8 +52,8 @@ $.get("./data/u01.processed", function(data){
 				);
 				rect.attr("fill", "#0" + (d%9) + "" + (d%9));
 
-				/* in this hour, how many people have
-				submitted stuff? */
+				/* add one hour */
+				currDate.setTime( currDate.getTime() + one_hour);
 
 			}
 		}
