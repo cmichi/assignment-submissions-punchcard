@@ -58,6 +58,14 @@ $(function() {
 		}
 	}
 
+	$.get("./data/grn/ue1.processed", function(data){
+		var firstDate = new Date(2012, 9, 30);
+		var currDate = new Date(2013, 9, 30);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+
 	$.get("./data/u01.processed", function(data){
 		var firstDate = new Date(2013, 03, 23);
 		var currDate = new Date(2013, 03, 23);
@@ -80,12 +88,20 @@ $(function() {
 		process(currDate, firstDate, data);
 		check()
 	}, dataType = 'text');
+
+	$.get("./data/grn/u01.processed", function(data){
+		var currDate = new Date(2013, 4, 21);
+		var firstDate = new Date(2013, 4, 21);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
 });
 
 var cbs = 0;
 function check() {
-	console.log(cbs)
-	if (cbs == 2)
+	//console.log(cbs)
+	if (cbs == 3)
 		paint()
 	cbs++
 }
@@ -124,8 +140,9 @@ function paint() {
 		}
 			if (s >= 310) {
 				//foo.rect.attr("fill", "#f00")
-				console.log(s)
-				console.log(foo.cnt);
+				//console.log(slots[s])
+				//console.log(s)
+				//console.log(foo.cnt);
 			}
 	}
 }
@@ -152,6 +169,7 @@ function process(currDate, firstDate, data) {
 			}
 		}
 		//console.log(data)
+		//console.log(dates)
 
 		for (var slot = 0; slot < 14 * 24; slot++) {
 			currDate.setTime( firstDate.getTime() + (slot * one_hour));
@@ -159,8 +177,11 @@ function process(currDate, firstDate, data) {
 				//console.log(currDate)
 
 			// in this hour, how many people have submitted stuff? 
-			var startHour = currDate.getTime() - one_hour;
-			var endHour = currDate.getTime() 
+			var startHour = currDate.getTime() 
+			var endHour = currDate.getTime()  + one_hour
+			if (slot > 310) {
+				//console.log(slot + ", "+ new Date(startHour))
+			}
 			var cnt = 0
 			for (var i in dates) {
 				if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) {
@@ -168,6 +189,7 @@ function process(currDate, firstDate, data) {
 					//console.log(dates[i])
 					//console.log("!")
 					//return
+					//slots[slot].push(dates[i])
 					cnt++;
 				}
 			}
