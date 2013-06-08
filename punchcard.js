@@ -1,4 +1,5 @@
 var slots = [];
+var max_slots = [];
 var one_hour = 3600000;
 var max  = 0;
 var viz = 1;
@@ -174,6 +175,11 @@ function paint() {
 			//foo.rect.attr("opacity", 0.2 + (1.0 / max) * Math.log(foo.cnt))
 			//return;
 		}
+
+		if ($.inArray(s, max_slots) !== -1)
+			foo.rect.attr("fill", "#f00")
+			//foo.rect.attr("stroke", "#f00")
+
 			if (s >= 310) {
 				//foo.rect.attr("fill", "#f00")
 				//console.log(slots[s])
@@ -233,7 +239,12 @@ function process(currDate, firstDate, data) {
 			//if (cnt > 0)
 			//console.log(cnt)
 
-			if (cnt > max) max = cnt;
+			if (cnt > max) {
+				max = cnt;
+				max_slots = [];
+			}
+			if (cnt == max) 
+				max_slots.push(slot);
 		}
-		console.log("max: " + max)
+		//console.log("max: " + max)
 }
