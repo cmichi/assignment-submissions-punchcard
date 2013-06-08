@@ -1,8 +1,9 @@
+var Color = net.brehaut.Color;
 var slots = [];
 var max_slots = [];
 var one_hour = 3600000;
 var max  = 0;
-var viz = 1;
+var viz = 3;
 
 $(function() {
 	for (var i = 0; i < 14 * 24; i++) {
@@ -18,6 +19,11 @@ $(function() {
 		var rect_margin = 5;
 		var day_margin = 20;
 		var days_in_row = 7;
+	} else if (viz == 3) {
+		var rect_size = 25;
+		var rect_margin = 5;
+		var day_margin = 0;
+		var days_in_row = 15;
 	} else {
 		var rect_size = 13;
 		var rect_margin = 3;
@@ -25,8 +31,13 @@ $(function() {
 		var days_in_row = 15;
 	}
 	var paper = Raphael("canvas", 1280, 600);
-	var cols = 6;
+	var cols = 6; 
 	var rows = 24 / cols;
+
+	if (viz == 3) {
+		cols = 1
+		rows = 24 
+	}
 	var day_width = (cols * rect_size) + (cols*rect_margin) + day_margin;
 
 	var y_margin = 0;
@@ -42,8 +53,10 @@ $(function() {
 					continue;
 
 				var rect = paper.rect(
-					((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
-					, (r * rect_margin) + (r * rect_size) + y_margin
+					 (r * rect_margin) + (r * rect_size) + y_margin
+					 , ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
+					// ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
+					// , (r * rect_margin) + (r * rect_size) + y_margin
 					, rect_size
 					, rect_size
 				);
@@ -162,18 +175,19 @@ function paint() {
 		if (foo.cnt === 0 ) 
 			foo.rect.attr("fill", "#fff")
 		else {
-			//console.log(100 + f * foo.cnt)
 			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
-			//console.log(col)
-			//foo.rect.attr("stroke", "#7D9AAA")
-			//foo.rect.attr("stroke", "#000")
-
-			//foo.rect.attr("fill", "#7D9AAA")
 
 			foo.rect.attr("fill", "#7D9AAA")
 			foo.rect.attr("opacity", 0.2 + (1.0 / max) * foo.cnt)
-			//foo.rect.attr("opacity", 0.2 + (1.0 / max) * Math.log(foo.cnt))
-			//return;
+
+			if (viz == 3) {
+				var v = 0.2 + (1.0 / max) * foo.cnt
+				var c = Color("#7D9AAA");
+				c = c.setAlpha(v)
+				foo.rect.attr("fill", c)
+				foo.rect.attr("stroke", "#888")
+				foo.rect.attr("opacity", 1.0)
+			}
 		}
 
 		if ($.inArray(s, max_slots) !== -1)
