@@ -57,10 +57,46 @@ $(function() {
 				y_margin += (rows * rect_size) + (rows*rect_margin) + 40;
 		}
 	}
+	$.get("./data/grn12-13/u06.processed", function(data){
+		var firstDate = new Date(2013, 0, 22);
+		var currDate = new Date(2013, 0, 22);
 
-	$.get("./data/grn12-13/ue1.processed", function(data){
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+
+	$.get("./data/grn12-13/u05.processed", function(data){
+		var firstDate = new Date(2013, 0, 8);
+		var currDate = new Date(2013, 0, 8);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+	$.get("./data/grn12-13/u04.processed", function(data){
+		var firstDate = new Date(2012, 11, 25);
+		var currDate = new Date(2012, 11, 25);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+	$.get("./data/grn12-13/u03.processed", function(data){
+		var firstDate = new Date(2012, 11, 4);
+		var currDate = new Date(2012, 11, 4);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+	$.get("./data/grn12-13/u02.processed", function(data){
+		var firstDate = new Date(2012, 10, 13);
+		var currDate = new Date(2012, 10, 13);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+
+	$.get("./data/grn12-13/u01.processed", function(data){
 		var firstDate = new Date(2012, 9, 30);
-		var currDate = new Date(2013, 9, 30);
+		var currDate = new Date(2012, 9, 30);
 
 		process(currDate, firstDate, data);
 		check()
@@ -101,9 +137,7 @@ $(function() {
 
 var cbs = 0;
 function check() {
-	console.log(cbs)
-	if (cbs == 4)
-	//if (cbs == 3)
+	if (cbs == 9)
 		paint()
 	cbs++
 }

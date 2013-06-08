@@ -11,6 +11,7 @@ cat $1 \
 	| sed 's/\,//g' \
 	| awk '{ print $3 "/" $2 "/" $1";"$4":00" }' \
 	| sed 's/Nov/11/g' \
+	| sed 's/Dez/12/g' \
 	| sed 's/Okt/10/g' \
 	| sed 's/Sep/09/g' \
 	| sed 's/Jan/01/g' \
