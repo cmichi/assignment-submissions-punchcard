@@ -15,11 +15,11 @@ $(function() {
 		};
 	}
 
-	var rect_size = 25;
-	var rect_margin = 5;
+	var rect_size = 0;
+	var rect_margin = 50;
 	var day_margin = 0;
 	var days_in_row = 15;
-	var paper = Raphael("canvas", 1280, 600);
+	var paper = Raphael("canvas", 1400, 1000);
 	var cols = 1; 
 	var rows = 24;
 	var day_width = (cols * rect_size) + (cols*rect_margin) + day_margin;
@@ -29,6 +29,7 @@ $(function() {
 
 	for (var r = 0; r < 24; r++) {
 		var x = (r * rect_size) + r * rect_margin + x_offset + 12 //+ (rect_margin /2)
+		//if (c % 2 == 0)
 		paper.text(x, 15, r+"-"+(r+1))
 	}
 	paper.text(15 + x_offset + (24*rect_size) + (24*rect_margin), 15, "Uhr")
@@ -48,13 +49,14 @@ $(function() {
 				if (slot > 13 * 24 + 7) // 8 is deadline 
 					continue;
 
-				var rect = paper.rect(
+				var rect = paper.circle(
+				//var rect = paper.rect(
 					 x_offset + (r * rect_margin) + (r * rect_size) + y_margin
 					 , y_offset + ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
 					// ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
 					// , (r * rect_margin) + (r * rect_size) + y_margin
 					, rect_size
-					, rect_size
+					//, rect_size
 				);
 
 				rect.attr("fill", "#0f0");
@@ -159,23 +161,37 @@ function paint() {
 
 		foo.rect.attr("stroke", "#888")
 
-		if (foo.cnt === 0 ) 
+		if (foo.cnt === 0 ) {
 			foo.rect.attr("fill", "#fff")
-		else {
+			foo.rect.attr("stroke", "#fff")
+		} else {
 			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
 
 			var v = 0.2 + (1.0 / max) * foo.cnt
 			var c = Color("#7D9AAA");
 			c = c.setAlpha(v)
 			foo.rect.attr("fill", c)
+			console.log(foo.cnt)
+
+			var rs = Math.log(foo.cnt * 100.0) * 0.8;
+			//rs = Math.log(foo.cnt, 10) * 10 // 0.3;
+			rs = foo.cnt * 0.25
+
+			var min_rs = 4.0;
+			var max_rs = 24.0;
+			if (rs > max_rs) rs =  max_rs;
+			if (rs < min_rs) rs = min_rs;
+
+			foo.rect.attr("width", rs)
+			foo.rect.attr("height", rs)
+			foo.rect.attr("r", rs)
 			foo.rect.attr("stroke", "#888")
 			foo.rect.attr("opacity", 1.0)
 
 		}
 
 		if ($.inArray(s, max_slots) !== -1)
-			//foo.rect.attr("fill", "#f00")
-			foo.rect.attr("stroke", "#f00")
+			//foo.rect.attr("stroke", "#f00")
 
 			if (s >= 310) {
 				//foo.rect.attr("fill", "#f00")
@@ -233,11 +249,9 @@ function process(currDate, firstDate, data) {
 				}
 			}
 			slots[slot].cnt += cnt;
-			//if (cnt > 0)
-			//console.log(cnt)
 
-			if (cnt > max) {
-				max = cnt;
+			if (slots[slot].cnt > max) {
+				max = slots[slot].cnt;
 				max_slots = [];
 			}
 			if (cnt == max) 

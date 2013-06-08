@@ -1,6 +1,6 @@
 # When do most students submit their solution for an assignment?
 
-A visualization for this question.
+A visualization to answer this question.
 
 
 # Generate Data files from ILIAS
