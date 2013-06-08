@@ -3,7 +3,8 @@ var slots = [];
 var max_slots = [];
 var one_hour = 3600000;
 var max  = 0;
-var viz = 3;
+
+var x_offset = y_offset = 30;
 
 $(function() {
 	for (var i = 0; i < 14 * 24; i++) {
@@ -14,34 +15,29 @@ $(function() {
 		};
 	}
 
-	if (viz == 1) {
-		var rect_size = 15;
-		var rect_margin = 5;
-		var day_margin = 20;
-		var days_in_row = 7;
-	} else if (viz == 3) {
-		var rect_size = 25;
-		var rect_margin = 5;
-		var day_margin = 0;
-		var days_in_row = 15;
-	} else {
-		var rect_size = 13;
-		var rect_margin = 3;
-		var day_margin = 0;
-		var days_in_row = 15;
-	}
+	var rect_size = 25;
+	var rect_margin = 5;
+	var day_margin = 0;
+	var days_in_row = 15;
 	var paper = Raphael("canvas", 1280, 600);
-	var cols = 6; 
-	var rows = 24 / cols;
-
-	if (viz == 3) {
-		cols = 1
-		rows = 24 
-	}
+	var cols = 1; 
+	var rows = 24;
 	var day_width = (cols * rect_size) + (cols*rect_margin) + day_margin;
 
 	var y_margin = 0;
 	var rects = [];
+
+	for (var r = 0; r < 24; r++) {
+		var x = (r * rect_size) + r * rect_margin + x_offset + 12 //+ (rect_margin /2)
+		paper.text(x, 15, r+"-"+(r+1))
+	}
+	paper.text(15 + x_offset + (24*rect_size) + (24*rect_margin), 15, "Uhr")
+
+	var arr = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+	for (var c = 0; c < 14; c++) {
+		var y = (c * rect_size) + c * rect_margin + x_offset + 12 
+		paper.text(15, y, arr[(c+1)%7])
+	}
 
 	for (var d = 0; d < 14; d++) {
 		for (var c = 0; c < cols; c++) {
@@ -53,8 +49,8 @@ $(function() {
 					continue;
 
 				var rect = paper.rect(
-					 (r * rect_margin) + (r * rect_size) + y_margin
-					 , ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
+					 x_offset + (r * rect_margin) + (r * rect_size) + y_margin
+					 , y_offset + ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
 					// ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
 					// , (r * rect_margin) + (r * rect_size) + y_margin
 					, rect_size
@@ -64,11 +60,6 @@ $(function() {
 				rect.attr("fill", "#0f0");
 				slots[slot].rect = rect;
 			}
-		}
-
-		if ((d === 13 || d === 6) && d > 0) {
-			if (viz == 1)
-				y_margin += (rows * rect_size) + (rows*rect_margin) + 40;
 		}
 	}
 	$.get("./data/grn12-13/u06.processed", function(data){
@@ -166,33 +157,25 @@ function paint() {
 			continue;
 		}
 
-		//if (foo.cnt > 0) console.log(foo.cnt)
-		if (viz == 1)
-			foo.rect.attr("stroke", "#000")
-		else
-			foo.rect.attr("stroke", "#888")
+		foo.rect.attr("stroke", "#888")
 
 		if (foo.cnt === 0 ) 
 			foo.rect.attr("fill", "#fff")
 		else {
 			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
 
-			foo.rect.attr("fill", "#7D9AAA")
-			foo.rect.attr("opacity", 0.2 + (1.0 / max) * foo.cnt)
+			var v = 0.2 + (1.0 / max) * foo.cnt
+			var c = Color("#7D9AAA");
+			c = c.setAlpha(v)
+			foo.rect.attr("fill", c)
+			foo.rect.attr("stroke", "#888")
+			foo.rect.attr("opacity", 1.0)
 
-			if (viz == 3) {
-				var v = 0.2 + (1.0 / max) * foo.cnt
-				var c = Color("#7D9AAA");
-				c = c.setAlpha(v)
-				foo.rect.attr("fill", c)
-				foo.rect.attr("stroke", "#888")
-				foo.rect.attr("opacity", 1.0)
-			}
 		}
 
 		if ($.inArray(s, max_slots) !== -1)
-			foo.rect.attr("fill", "#f00")
-			//foo.rect.attr("stroke", "#f00")
+			//foo.rect.attr("fill", "#f00")
+			foo.rect.attr("stroke", "#f00")
 
 			if (s >= 310) {
 				//foo.rect.attr("fill", "#f00")
