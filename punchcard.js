@@ -58,7 +58,7 @@ $(function() {
 		}
 	}
 
-	$.get("./data/grn/ue1.processed", function(data){
+	$.get("./data/grn12-13/ue1.processed", function(data){
 		var firstDate = new Date(2012, 9, 30);
 		var currDate = new Date(2013, 9, 30);
 
@@ -66,7 +66,7 @@ $(function() {
 		check()
 	}, dataType = 'text');
 
-	$.get("./data/u01.processed", function(data){
+	$.get("./data/muc13/u01.processed", function(data){
 		var firstDate = new Date(2013, 03, 23);
 		var currDate = new Date(2013, 03, 23);
 
@@ -74,14 +74,15 @@ $(function() {
 		check()
 	}, dataType = 'text');
 
-	$.get("./data/u02.processed", function(data){
+	$.get("./data/muc13/u02.processed", function(data){
 		var currDate = new Date(2013, 4, 8);
 		var firstDate = new Date(2013, 4, 8);
+
 		process(currDate, firstDate, data);
 		check()
 	}, dataType = 'text');
 
-	$.get("./data/u03.processed", function(data){
+	$.get("./data/muc13/u03.processed", function(data){
 		var currDate = new Date(2013, 4, 21);
 		var firstDate = new Date(2013, 4, 21);
 
@@ -89,7 +90,7 @@ $(function() {
 		check()
 	}, dataType = 'text');
 
-	$.get("./data/grn/u01.processed", function(data){
+	$.get("./data/muc13/u01.processed", function(data){
 		var currDate = new Date(2013, 4, 21);
 		var firstDate = new Date(2013, 4, 21);
 
@@ -100,8 +101,9 @@ $(function() {
 
 var cbs = 0;
 function check() {
-	//console.log(cbs)
-	if (cbs == 3)
+	console.log(cbs)
+	if (cbs == 4)
+	//if (cbs == 3)
 		paint()
 	cbs++
 }
