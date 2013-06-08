@@ -1,7 +1,7 @@
 var slots = [];
 var one_hour = 3600000;
 var max  = 0;
-var viz = 2;
+var viz = 1;
 
 $.get("./data/u01.processed", function(data){
 	var lines = data.split('\n');
@@ -99,7 +99,7 @@ function paint() {
 		if (viz == 1)
 			foo.rect.attr("stroke", "#000")
 		else
-			foo.rect.attr("stroke", "#444")
+			foo.rect.attr("stroke", "#888")
 
 		if (foo.cnt === 0 ) 
 			foo.rect.attr("fill", "#fff")
@@ -111,15 +111,16 @@ function paint() {
 			//foo.rect.attr("stroke", "#000")
 
 			//foo.rect.attr("fill", "#7D9AAA")
-			//foo.rect.attr("opacity", (1.0 / max) * foo.cnt)
 
 			foo.rect.attr("fill", "#7D9AAA")
 			foo.rect.attr("opacity", 0.2 + (1.0 / max) * foo.cnt)
+			//foo.rect.attr("opacity", 0.2 + (1.0 / max) * Math.log(foo.cnt))
 			//return;
 		}
-			if (s >= 355) {
+			if (s >= 310) {
 				//foo.rect.attr("fill", "#f00")
-				//console.log()
+				console.log(s)
+				console.log(foo.cnt);
 			}
 	}
 }

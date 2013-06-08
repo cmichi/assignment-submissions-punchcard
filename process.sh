@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cat ./data/u03.txt \
+cat ./data/grn/grn.processed \
 	| sed "s/<span class=\"small\">Datum der letzten Abgabe: //" \
 	| sed "s/<br>//" \
 	| sed "s/---//" \
