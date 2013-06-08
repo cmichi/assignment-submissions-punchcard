@@ -3,14 +3,7 @@ var one_hour = 3600000;
 var max  = 0;
 var viz = 1;
 
-$.get("./data/u01.processed", function(data){
-	var lines = data.split('\n');
-	var dates = [];
-	for (var i in lines) {
-		var line = lines[i].replace(';', ' ')
-		dates.push(new Date(line));
-	}
-
+$(function() {
 	for (var i = 0; i < 14 * 24; i++) {
 		slots[i] = {
 			rect: undefined
@@ -44,7 +37,7 @@ $.get("./data/u01.processed", function(data){
 				var slot = d * 24 + (c*rows) + r;
 				//console.log(slot)
 
-				if (slot > 13 * 24 + 7) /* 8 is deadline */
+				if (slot > 13 * 24 + 7) // 8 is deadline 
 					continue;
 
 				var rect = paper.rect(
@@ -65,25 +58,37 @@ $.get("./data/u01.processed", function(data){
 		}
 	}
 
-	var firstDate = new Date(2013, 03, 23);
-	var currDate = new Date(2013, 03, 23);
-	process(currDate, firstDate, data);
+	$.get("./data/u01.processed", function(data){
+		var firstDate = new Date(2013, 03, 23);
+		var currDate = new Date(2013, 03, 23);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
 
 	$.get("./data/u02.processed", function(data){
 		var currDate = new Date(2013, 4, 8);
 		var firstDate = new Date(2013, 4, 8);
 		process(currDate, firstDate, data);
-
-		$.get("./data/u03.processed", function(data){
-			var currDate = new Date(2013, 4, 21);
-			var firstDate = new Date(2013, 4, 21);
-
-			process(currDate, firstDate, data);
-			paint()
-		}, dataType = 'text');
+		check()
 	}, dataType = 'text');
 
-}, dataType = 'text');
+	$.get("./data/u03.processed", function(data){
+		var currDate = new Date(2013, 4, 21);
+		var firstDate = new Date(2013, 4, 21);
+
+		process(currDate, firstDate, data);
+		check()
+	}, dataType = 'text');
+});
+
+var cbs = 0;
+function check() {
+	console.log(cbs)
+	if (cbs == 2)
+		paint()
+	cbs++
+}
 
 function paint() {
 	// 255 = f * max
@@ -91,7 +96,7 @@ function paint() {
 	for (var s = 0; s < 14 * 24; s++) {
 		var foo = slots[s];
 		if (foo == undefined || foo.rect == undefined) {
-			console.log(s + " was undef")
+			//console.log(s + " was undef")
 			continue;
 		}
 
