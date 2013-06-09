@@ -150,7 +150,7 @@ function check() {
 	if (cbs == 9) {
 		console.log("max submissions: " + max + " of total " + all_cnt
 		+ " are in slots " + max_slots.join(", "));
-		console.log((allcnt/max) + " % of all students submitted here")
+		console.log((all_cnt/max) + " % of all students submitted here")
 		paint();
 	}
 	cbs++
@@ -179,13 +179,11 @@ function paint() {
 			c = c.setAlpha(v)
 			foo.rect.attr("fill", c)
 
-			var rs = Math.log(foo.cnt * 100.0) * 0.8;
-			rs = Math.log(foo.cnt * 1.0) * 9
-			rs *= 0.54
+			/* area of circles = how many submissions in this hour?  */
+			var rs = (foo.cnt / Math.PI)
+			rs *= 0.83;
 
-			var min_rs = 4.3;
-			var max_rs = 25.0;
-			//if (rs > max_rs) rs =  max_rs;
+			var min_rs = 1.0;
 			if (rs < min_rs) rs = min_rs;
 
 			foo.rect.attr("width", rs)
