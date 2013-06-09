@@ -179,11 +179,13 @@ function paint() {
 			c = c.setAlpha(v)
 			foo.rect.attr("fill", c)
 
-			/* area of circles = how many submissions in this hour?  */
-			var rs = (foo.cnt / Math.PI)
-			rs *= 0.83;
+			/* the area of a circle represents how many submissions 
+			were made in this hour? therefore the radius is calculated 
+			using a = pi * (r*r). */
+			var rs = Math.sqrt(foo.cnt / Math.PI)
+			rs *= 4.4; /* scale circles down */
 
-			var min_rs = 1.0;
+			var min_rs = 0.4;
 			if (rs < min_rs) rs = min_rs;
 
 			foo.rect.attr("width", rs)
