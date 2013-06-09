@@ -1,6 +1,7 @@
 var Color = net.brehaut.Color;
 var slots = [];
 var max_slots = [];
+var all_cnt = 0;
 var one_hour = 3600000;
 var max  = 0;
 
@@ -146,8 +147,12 @@ $(function() {
 
 var cbs = 0;
 function check() {
-	if (cbs == 9)
-		paint()
+	if (cbs == 9) {
+		console.log("max submissions: " + max + " of total " + all_cnt
+		+ " are in slots " + max_slots.join(", "));
+		console.log((allcnt/max) + " % of all students submitted here")
+		paint();
+	}
 	cbs++
 }
 
@@ -232,12 +237,13 @@ function process(currDate, firstDate, data) {
 				}
 			}
 			slots[slot].cnt += cnt;
+			all_cnt += cnt;
 
 			if (slots[slot].cnt > max) {
 				max = slots[slot].cnt;
 				max_slots = [];
 			}
-			if (cnt == max) 
+			if (slots[slot].cnt == max) 
 				max_slots.push(slot);
 		}
 }
