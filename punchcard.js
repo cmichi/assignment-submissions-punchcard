@@ -30,7 +30,6 @@ $(function() {
 
 	for (var r = 0; r < 24; r++) {
 		var x = (r * rect_size) + r * rect_margin + x_offset - 2
-		//if (c % 2 == 0)
 		paper.text(x, 15, r+"-"+(r+1))
 	}
 	paper.text(15 + x_offset + (24*rect_size) + (24*rect_margin), 15, "Time")
@@ -45,7 +44,6 @@ $(function() {
 		for (var c = 0; c < cols; c++) {
 			for (var r = 0; r < rows; r++) {
 				var slot = d * 24 + (c*rows) + r;
-				//console.log(slot)
 
 				if (slot > 13 * 24 + 7) // 8 is deadline 
 					continue;
@@ -80,6 +78,7 @@ $(function() {
 		process(currDate, firstDate, data);
 		check()
 	}, dataType = 'text');
+
 	$.get("./data/grn12-13/u04.processed", function(data){
 		var firstDate = new Date(2012, 11, 25);
 		var currDate = new Date(2012, 11, 25);
@@ -87,6 +86,7 @@ $(function() {
 		process(currDate, firstDate, data);
 		check()
 	}, dataType = 'text');
+
 	$.get("./data/grn12-13/u03.processed", function(data){
 		var firstDate = new Date(2012, 11, 4);
 		var currDate = new Date(2012, 11, 4);
@@ -94,6 +94,7 @@ $(function() {
 		process(currDate, firstDate, data);
 		check()
 	}, dataType = 'text');
+
 	$.get("./data/grn12-13/u02.processed", function(data){
 		var firstDate = new Date(2012, 10, 13);
 		var currDate = new Date(2012, 10, 13);
@@ -151,12 +152,12 @@ function check() {
 }
 
 function paint() {
-	// 255 = f * max
+	/* 255 = f * max */
 	var f = 255 / max;
+
 	for (var s = 0; s < 14 * 24; s++) {
 		var foo = slots[s];
 		if (foo == undefined || foo.rect == undefined) {
-			//console.log(s + " was undef")
 			continue;
 		}
 
@@ -172,14 +173,10 @@ function paint() {
 			var c = Color("#7D9AAA");
 			c = c.setAlpha(v)
 			foo.rect.attr("fill", c)
-			console.log(foo.cnt)
 
 			var rs = Math.log(foo.cnt * 100.0) * 0.8;
-			rs = foo.cnt * 0.29
 			rs = Math.log(foo.cnt * 1.0) * 9
 			rs *= 0.54
-
-			//rs = Math.pow(2, foo.cnt * 0.1)
 
 			var min_rs = 4.3;
 			var max_rs = 25.0;
@@ -196,18 +193,7 @@ function paint() {
 			foo.rect.attr("stroke", sc)
 
 			foo.rect.attr("opacity", 1.0)
-
 		}
-
-		if ($.inArray(s, max_slots) !== -1)
-			//foo.rect.attr("stroke", "#f00")
-
-			if (s >= 310) {
-				//foo.rect.attr("fill", "#f00")
-				//console.log(slots[s])
-				//console.log(s)
-				//console.log(foo.cnt);
-			}
 	}
 }
 
@@ -229,24 +215,17 @@ function process(currDate, firstDate, data) {
 			var line = lines[i].replace(';', ' ')
 			if (line.trim().length > 0) {
 				dates.push(new Date(line));
-				//console.log(line + " " + (new Date(line)))
 			}
 		}
-		//console.log(data)
-		//console.log(dates)
 
 		for (var slot = 0; slot < 14 * 24; slot++) {
 			currDate.setTime( firstDate.getTime() + (slot * one_hour));
-			//if (slot >=  354)
-				//console.log(currDate)
 
 			// in this hour, how many people have submitted stuff? 
 			var startHour = currDate.getTime() 
 			var endHour = currDate.getTime()  + one_hour
-			if (slot > 310) {
-				//console.log(slot + ", "+ new Date(startHour))
-			}
 			var cnt = 0
+
 			for (var i in dates) {
 				if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) {
 					cnt++;
@@ -261,5 +240,4 @@ function process(currDate, firstDate, data) {
 			if (cnt == max) 
 				max_slots.push(slot);
 		}
-		//console.log("max: " + max)
 }
