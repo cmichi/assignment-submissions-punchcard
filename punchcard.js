@@ -4,7 +4,8 @@ var max_slots = [];
 var one_hour = 3600000;
 var max  = 0;
 
-var x_offset = y_offset = 30;
+var x_offset = 40
+var y_offset = 40;
 
 $(function() {
 	for (var i = 0; i < 14 * 24; i++) {
@@ -28,16 +29,16 @@ $(function() {
 	var rects = [];
 
 	for (var r = 0; r < 24; r++) {
-		var x = (r * rect_size) + r * rect_margin + x_offset + 12 //+ (rect_margin /2)
+		var x = (r * rect_size) + r * rect_margin + x_offset - 2
 		//if (c % 2 == 0)
 		paper.text(x, 15, r+"-"+(r+1))
 	}
-	paper.text(15 + x_offset + (24*rect_size) + (24*rect_margin), 15, "Uhr")
+	paper.text(15 + x_offset + (24*rect_size) + (24*rect_margin), 15, "Time")
 
 	var arr = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 	for (var c = 0; c < 14; c++) {
-		var y = (c * rect_size) + c * rect_margin + x_offset + 12 
-		paper.text(15, y, arr[(c+1)%7])
+		var y = (c * rect_size) + c * 50 + x_offset + 0 
+		paper.text(0, y, arr[(c+1)%7])
 	}
 
 	for (var d = 0; d < 14; d++) {
@@ -174,18 +175,26 @@ function paint() {
 			console.log(foo.cnt)
 
 			var rs = Math.log(foo.cnt * 100.0) * 0.8;
-			//rs = Math.log(foo.cnt, 10) * 10 // 0.3;
-			rs = foo.cnt * 0.25
+			rs = foo.cnt * 0.29
+			rs = Math.log(foo.cnt * 1.0) * 9
+			rs *= 0.54
 
-			var min_rs = 4.0;
-			var max_rs = 24.0;
-			if (rs > max_rs) rs =  max_rs;
+			//rs = Math.pow(2, foo.cnt * 0.1)
+
+			var min_rs = 4.3;
+			var max_rs = 25.0;
+			//if (rs > max_rs) rs =  max_rs;
 			if (rs < min_rs) rs = min_rs;
 
 			foo.rect.attr("width", rs)
 			foo.rect.attr("height", rs)
 			foo.rect.attr("r", rs)
 			foo.rect.attr("stroke", "#888")
+
+			var sc = Color("#7D9AAA");
+			sc = sc.darkenByAmount(rs * 0.014);
+			foo.rect.attr("stroke", sc)
+
 			foo.rect.attr("opacity", 1.0)
 
 		}
@@ -240,11 +249,6 @@ function process(currDate, firstDate, data) {
 			var cnt = 0
 			for (var i in dates) {
 				if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) {
-					//console.log(startHour)
-					//console.log(dates[i])
-					//console.log("!")
-					//return
-					//slots[slot].push(dates[i])
 					cnt++;
 				}
 			}
