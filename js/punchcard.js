@@ -1,44 +1,44 @@
 var Color = net.brehaut.Color;
 var slots = [];
 var max_slots = [];
-var all_cnt = 0;
+var submissions_total = 0;
 var one_hour = 3600000;
 var max  = 0;
 
-var x_offset = 40
-var y_offset = 40;
 
 $(function() {
 	for (var i = 0; i < 14 * 24; i++) {
 		slots[i] = {
-			rect: undefined
+			circle: undefined
 			, cnt: 0
 			, dates: []
 		};
 	}
 
-	var rect_size = 0;
-	var rect_margin = 50;
-	var day_margin = 0;
+	var x_offset = 40;
+	var y_offset = 40;
+
+	var circle_margin = 50;
 	var days_in_row = 15;
 	var paper = Raphael("canvas", 1400, 1000);
 	var cols = 1; 
 	var rows = 24;
-	var day_width = (cols * rect_size) + (cols*rect_margin) + day_margin;
-
+	var day_width = cols * circle_margin;
 	var y_margin = 0;
-	var rects = [];
+	var circles = [];
 
+	/* x-axis */
 	for (var r = 0; r < 24; r++) {
-		var x = (r * rect_size) + r * rect_margin + x_offset - 2
-		paper.text(x, 15, r+"-"+(r+1))
+		var x = r * circle_margin + x_offset - 2;
+		paper.text(x, 15, r + "-" + (r+1))
 	}
-	paper.text(15 + x_offset + (24*rect_size) + (24*rect_margin), 15, "Time")
+	paper.text(15 + x_offset + (24 * circle_margin), 15, "Time")
 
+	/* y-axis */
 	var arr = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 	for (var c = 0; c < 14; c++) {
-		var y = (c * rect_size) + c * 50 + x_offset + 0 
-		paper.text(0, y, arr[(c+1)%7])
+		var y = c * 50 + x_offset + 0;
+		paper.text(0, y, arr[(c+1) % 7]);
 	}
 
 	for (var d = 0; d < 14; d++) {
@@ -46,21 +46,18 @@ $(function() {
 			for (var r = 0; r < rows; r++) {
 				var slot = d * 24 + (c*rows) + r;
 
-				if (slot > 13 * 24 + 7) // 8 is deadline 
+				/* 8:00 AM is deadline */
+				if (slot > 13 * 24 + 7)
 					continue;
 
-				var rect = paper.circle(
-				//var rect = paper.rect(
-					 x_offset + (r * rect_margin) + (r * rect_size) + y_margin
-					 , y_offset + ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
-					// ((d%days_in_row)*day_width) + (c * rect_margin) + (c * rect_size) 
-					// , (r * rect_margin) + (r * rect_size) + y_margin
-					, rect_size
-					//, rect_size
+				var circle = paper.circle(
+					 x_offset + (r * circle_margin) + y_margin
+					 , y_offset + ((d % days_in_row) * day_width) + (c * circle_margin) 
+					 , 0
 				);
 
-				rect.attr("fill", "#0f0");
-				slots[slot].rect = rect;
+				circle.attr("fill", "#0f0");
+				slots[slot].circle = circle;
 			}
 		}
 	}
@@ -69,7 +66,7 @@ $(function() {
 		var currDate = new Date(2013, 0, 22);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/grn12-13/u05.processed", function(data){
@@ -77,7 +74,7 @@ $(function() {
 		var currDate = new Date(2013, 0, 8);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/grn12-13/u04.processed", function(data){
@@ -85,7 +82,7 @@ $(function() {
 		var currDate = new Date(2012, 11, 25);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/grn12-13/u03.processed", function(data){
@@ -93,7 +90,7 @@ $(function() {
 		var currDate = new Date(2012, 11, 4);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/grn12-13/u02.processed", function(data){
@@ -101,7 +98,7 @@ $(function() {
 		var currDate = new Date(2012, 10, 13);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/grn12-13/u01.processed", function(data){
@@ -109,7 +106,7 @@ $(function() {
 		var currDate = new Date(2012, 9, 30);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/muc13/u01.processed", function(data){
@@ -117,7 +114,7 @@ $(function() {
 		var currDate = new Date(2013, 03, 23);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/muc13/u02.processed", function(data){
@@ -125,7 +122,7 @@ $(function() {
 		var firstDate = new Date(2013, 4, 8);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/muc13/u03.processed", function(data){
@@ -133,7 +130,7 @@ $(function() {
 		var firstDate = new Date(2013, 4, 21);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 
 	$.get("./data/muc13/u01.processed", function(data){
@@ -141,75 +138,57 @@ $(function() {
 		var firstDate = new Date(2013, 4, 21);
 
 		process(currDate, firstDate, data);
-		check()
+		check();
 	}, dataType = 'text');
 });
 
-var cbs = 0;
+/* check gets called each time data for an assignment was processed.
+once each assignment is processed stuff is painted. */
+var barrier_points = 0;
 function check() {
-	if (cbs == 9) {
-		console.log("max submissions: " + max + " of total " + all_cnt
-		+ " are in slots " + max_slots.join(", "));
-		console.log((all_cnt/max) + " % of all students submitted here")
+	if (barrier_points === 9) {
+		console.log("max submissions: " + max + " of total " 
+				+ submissions_total + " are in slots " + max_slots.join(", "));
+		console.log((submissions_total / max) + " % of all students submitted here");
 		paint();
 	}
-	cbs++
+	barrier_points++;
 }
 
 function paint() {
-	/* 255 = f * max */
-	var f = 255 / max;
-
 	for (var s = 0; s < 14 * 24; s++) {
-		var foo = slots[s];
-		if (foo == undefined || foo.rect == undefined) {
+		var slot = slots[s];
+		if (slot == undefined || slot.circle == undefined) {
 			continue;
 		}
 
-		foo.rect.attr("stroke", "#888")
+		slot.circle.attr("stroke", "#888");
 
-		if (foo.cnt === 0 ) {
-			foo.rect.attr("fill", "#fff")
-			foo.rect.attr("stroke", "#fff")
+		if (slot.cnt === 0 ) {
+			slot.circle.attr("fill", "#fff");
+			slot.circle.attr("stroke", "#fff");
 		} else {
-			var col = rgbToHex(Math.ceil(100 + f * foo.cnt), 0, 0) 
-
-			var v = 0.2 + (1.0 / max) * foo.cnt
-			var c = Color("#7D9AAA");
-			c = c.setAlpha(v)
-			foo.rect.attr("fill", c)
+			var alpha = 0.2 + (1.0 / max) * slot.cnt;
+			var col = Color("#7D9AAA").setAlpha(alpha);
+			slot.circle.attr("fill", col);
 
 			/* the area of a circle represents how many submissions 
 			were made in this hour? therefore the radius is calculated 
-			using a = pi * (r*r). */
-			var rs = Math.sqrt(foo.cnt / Math.PI)
-			rs *= 4.4; /* scale circles down */
+			using 'a = pi * (r*r)'. */
+			var r = Math.sqrt(slot.cnt / Math.PI)
+			r *= 4.4; /* scale circle down */
 
-			var min_rs = 0.4;
-			if (rs < min_rs) rs = min_rs;
+			var min_r = 0.4;
+			if (r < min_r) r = min_r;
 
-			foo.rect.attr("width", rs)
-			foo.rect.attr("height", rs)
-			foo.rect.attr("r", rs)
-			foo.rect.attr("stroke", "#888")
+			slot.circle.attr("r", r);
+			slot.circle.attr("stroke", "#888")
 
-			var sc = Color("#7D9AAA");
-			sc = sc.darkenByAmount(rs * 0.014);
-			foo.rect.attr("stroke", sc)
-
-			foo.rect.attr("opacity", 1.0)
+			/* the lighter the color of the circle, the darker the stroke */
+			var stroke_col = Color("#7D9AAA").darkenByAmount(r * 0.014);
+			slot.circle.attr("stroke", stroke_col);
 		}
 	}
-}
-
-function componentToHex(c) {
-	var hex = c.toString(16);
-	return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) +
-    componentToHex(b);
 }
 
 function process(currDate, firstDate, data) {
@@ -217,7 +196,7 @@ function process(currDate, firstDate, data) {
 
 		var lines = data.split('\n');
 		for (var i in lines) {
-			var line = lines[i].replace(';', ' ')
+			var line = lines[i].replace(';', ' ');
 			if (line.trim().length > 0) {
 				dates.push(new Date(line));
 			}
@@ -226,23 +205,23 @@ function process(currDate, firstDate, data) {
 		for (var slot = 0; slot < 14 * 24; slot++) {
 			currDate.setTime( firstDate.getTime() + (slot * one_hour));
 
-			// in this hour, how many people have submitted stuff? 
-			var startHour = currDate.getTime() 
-			var endHour = currDate.getTime()  + one_hour
-			var cnt = 0
+			/* in this hour, how many people have submitted stuff? */
+			var startHour = currDate.getTime();
+			var endHour = currDate.getTime()  + one_hour;
+			var cnt = 0;
 
 			for (var i in dates) {
-				if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) {
+				if (dates[i].getTime() >= startHour && dates[i].getTime() <= endHour) 
 					cnt++;
-				}
 			}
 			slots[slot].cnt += cnt;
-			all_cnt += cnt;
+			submissions_total += cnt;
 
 			if (slots[slot].cnt > max) {
 				max = slots[slot].cnt;
 				max_slots = [];
 			}
+
 			if (slots[slot].cnt == max) 
 				max_slots.push(slot);
 		}
