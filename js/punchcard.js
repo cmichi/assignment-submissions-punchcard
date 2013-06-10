@@ -166,7 +166,7 @@ function draw() {
 			slot.circle.attr("fill", col);
 
 			/* the area of a circle represents how many submissions 
-			were made in this hour? therefore the radius is calculated 
+			were made in this hour. therefore the radius is calculated 
 			using 'a = pi * (r*r)'. */
 			var r = Math.sqrt(slot.cnt / Math.PI)
 			r *= 4.4; /* scale circle into visible area */
@@ -215,7 +215,7 @@ function process(currDate, firstDate, data) {
 				max_slots = [];
 			}
 
-			if (slots[slot].cnt == max) 
+			if (slots[slot].cnt === max) 
 				max_slots.push(slot);
 		}
 }
