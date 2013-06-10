@@ -1,13 +1,22 @@
 # When do most students submit their solution for an assignment?
 
-A visualization to answer this question.
+A visualization to answer this question. Clone the repository and
+open the file `visualization.html`. You should then see the generated
+svg:
+
+![visualization](http://micha.elmueller.net/media/uni-submissions.png)
 
 
-# Generate Data files from ILIAS
+# Data
 
-I saved the HTML pages and executed
+The saved HTML pages with student submissions have each been processed using
 
 	$ /bin/sh ./process.sh raw/grn/ue6.html > data/grn12\-13/u06.processed
+
+The data is from the course _Introduction to Computer Networking_ (WS12/13)
+and _Mobile and Ubiquitous Computing_ (SS13). The second MUC assignment has
+been left out of the visualization because the deadline was on a Tuesday,
+not a Monday.
 
 
 # Libraries
@@ -19,7 +28,7 @@ I saved the HTML pages and executed
 
 # License
 
-Code under MIT. Rendered PDF under CC-BY 3.0.
+Code under MIT. Rendered SVG under CC-BY 3.0.
 
 	Copyright (c) 2013
 
