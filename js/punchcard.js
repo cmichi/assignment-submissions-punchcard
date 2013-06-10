@@ -1,10 +1,13 @@
+/* Code works. However, you should note: It has grown
+into a different visualization than I wanted at first.
+Some stuff is still ugly or redundant. */
+
 var Color = net.brehaut.Color;
 var slots = [];
 var max_slots = [];
 var submissions_total = 0;
 var one_hour = 3600000;
 var max  = 0;
-
 
 $(function() {
 	for (var i = 0; i < 14 * 24; i++) {
@@ -61,6 +64,7 @@ $(function() {
 			}
 		}
 	}
+
 	$.get("./data/grn12-13/u06.processed", function(data){
 		var firstDate = new Date(2013, 0, 22);
 		var currDate = new Date(2013, 0, 22);
@@ -117,14 +121,6 @@ $(function() {
 		check();
 	}, dataType = 'text');
 
-	$.get("./data/muc13/u02.processed", function(data){
-		var currDate = new Date(2013, 4, 8);
-		var firstDate = new Date(2013, 4, 8);
-
-		process(currDate, firstDate, data);
-		check();
-	}, dataType = 'text');
-
 	$.get("./data/muc13/u03.processed", function(data){
 		var currDate = new Date(2013, 4, 21);
 		var firstDate = new Date(2013, 4, 21);
@@ -142,27 +138,24 @@ $(function() {
 	}, dataType = 'text');
 });
 
-/* check gets called each time data for an assignment was processed.
-once each assignment is processed stuff is painted. */
+/* check() gets called each time data for an assignment was processed.
+once each assignment is processed stuff is drawn. */
 var barrier_points = 0;
 function check() {
-	if (barrier_points === 9) {
+	if (barrier_points === 8) {
 		console.log("max submissions: " + max + " of total " 
 				+ submissions_total + " are in slots " + max_slots.join(", "));
 		console.log((submissions_total / max) + " % of all students submitted here");
-		paint();
+		draw();
 	}
 	barrier_points++;
 }
 
-function paint() {
+function draw() {
 	for (var s = 0; s < 14 * 24; s++) {
 		var slot = slots[s];
-		if (slot == undefined || slot.circle == undefined) {
+		if (slot == undefined || slot.circle == undefined) 
 			continue;
-		}
-
-		slot.circle.attr("stroke", "#888");
 
 		if (slot.cnt === 0 ) {
 			slot.circle.attr("fill", "#fff");
@@ -176,10 +169,10 @@ function paint() {
 			were made in this hour? therefore the radius is calculated 
 			using 'a = pi * (r*r)'. */
 			var r = Math.sqrt(slot.cnt / Math.PI)
-			r *= 4.4; /* scale circle down */
+			r *= 4.4; /* scale circle into visible area */
 
 			var min_r = 0.4;
-			if (r < min_r) r = min_r;
+			if (r < min_r && slot.cnt > 0) r = min_r;
 
 			slot.circle.attr("r", r);
 			slot.circle.attr("stroke", "#888")
